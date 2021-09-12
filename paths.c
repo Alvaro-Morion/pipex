@@ -70,27 +70,48 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
-char	**ft_get_path(char **env)
+void	ft_putstr_fd(char *s, int fd)
 {
-	char	**split;
-	char	**paths;
-	int		i;
+	int	i;
 
-	while (*env)
-	{
-		split = ft_split(*env, '=');
-		if (ft_strnstr(split[0], "PATH", ft_strlen("PATH")))
-			break ;
-		ft_free_split(split);
-		env++;
-	}
-	paths = ft_split(split[1], ':');
-	ft_free_split(split);
 	i = 0;
-	while (paths[i])
+	while (s[i])
 	{
-		ft_strlcat(paths[i], "/", ft_strlen(paths[i]) + 2);
+		write(fd, &s[i], 1);
 		i++;
 	}
-	return (paths);
+}
+
+// Devuelve el path del comando especificado
+char	*find_path(char *cmd, char **envp)
+{
+	int i;
+	char *paths;
+	char **path;
+
+	i = 0;
+	paths = NULL;
+	while(!paths)
+	{
+		paths = ft_strnstr(envp[i], "PATH=", 5);
+		i++;
+	}
+	paths = paths + ft_strlen("PATH=");
+	path = ft_split(paths, ':');
+	i = 0;
+	while(path[i])
+	{
+		ft_strlcat(path[i], "/", ft_strlen(path[i]) + 2);
+		paths=ft_strjoin(path[i], cmd);
+		if (access(paths, F_OK) == 0)
+		{
+			ft_free_split(path);
+			return(paths);
+		}
+		free(paths);
+		i++;
+	}
+	ft_putstr_fd("Comand not found: ", 0);
+	ft_putstr_fd(cmd, 0);
+	exit(-1);
 }
