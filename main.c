@@ -1,18 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amorion- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/09/12 15:12:17 by amorion-          #+#    #+#             */
-/*   Updated: 2021/09/12 15:12:19 by amorion-         ###   ########.fr       */
+/*   Created: 2021/09/12 17:43:41 by amorion-          #+#    #+#             */
+/*   Updated: 2021/09/12 17:43:46 by amorion-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-// Devuelve el path del comando especificado
 char	*find_path(char *cmd, char **envp)
 {
 	int		i;
@@ -45,14 +44,15 @@ void	ft_exec(char *cmd, char **envp)
 	char	**comand;
 
 	comand = ft_parse_comand(cmd);
+	printf("%s\n", comand[1]);
 	path = find_path(comand[0], envp);
 	if (execve(path, comand, envp) == -1)
 	{
-		perror("Comand: ");
+		perror("Comand ");
 	}
 }
 
-void	ft_child_process(char **argv, char **envp, int *pip)
+int	ft_child_process(char **argv, char **envp, int *pip)
 {
 	int	fin;
 
@@ -60,13 +60,14 @@ void	ft_child_process(char **argv, char **envp, int *pip)
 	if (fin < 0)
 	{
 		perror("File 1: ");
-		exit(-1);
+		return(-1);
 	}
 	dup2(pip[1], STDOUT_FILENO);
 	dup2(fin, STDIN_FILENO);
 	close(pip[0]);
 	ft_exec(argv[2], envp);
 	close(fin);
+	return(0);
 }
 
 void	ft_parent_process(char **argv, char **envp, int *pip)
@@ -79,7 +80,7 @@ void	ft_parent_process(char **argv, char **envp, int *pip)
 	if (fout < 0)
 	{
 		perror("File 2: ");
-		return ;
+		exit(-1);
 	}
 	dup2(pip[0], STDIN_FILENO);
 	dup2(fout, STDOUT_FILENO);
@@ -99,18 +100,25 @@ int	main(int argc, char **argv, char **envp)
 	if (pipe(pip) == -1)
 	{
 		perror("Pipe: ");
-		return (-1);
+		exit(-1);
 	}
 	pid = fork();
 	if (pid < 0)
 		perror("Fork: ");
 	else if (pid == 0)
-		ft_child_process(argv, envp, pip);
+	{
+		if (ft_child_process(argv, envp, pip) == -1)
+			exit(-1);
+	}
 	else
 	{
-		wait(&status);
+		if(waitpid(-1, &status, 0) > 0)
+			exit(-1);
+		if(status == -1)
+			return(-1);
 		ft_parent_process(argv, envp, pip);
 	}
 	close(pip[0]);
 	close(pip[1]);
+	return(0);
 }
