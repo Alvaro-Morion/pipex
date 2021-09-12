@@ -20,6 +20,7 @@
 
 char	*ft_get_path(char **path, char *cmd);
 char	**ft_split(char const *s, char c);
+char	**ft_parse_comand(char *cmd);
 void	ft_free_split(char **split);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	**ft_get_comand(char *cmd);

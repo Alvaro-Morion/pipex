@@ -44,7 +44,7 @@ void	ft_exec(char *cmd, char **envp)
 	char	*path;
 	char	**comand;
 
-	comand = ft_split(cmd, ' ');
+	comand = ft_parse_comand(cmd);
 	path = find_path(comand[0], envp);
 	if (execve(path, comand, envp) == -1)
 	{
