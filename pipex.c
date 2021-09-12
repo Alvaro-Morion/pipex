@@ -12,10 +12,37 @@
 
 #include "pipex.h"
 
-void 	ft_exec(char *cmd, char **envp)
+// Devuelve el path del comando especificado
+char	*find_path(char *cmd, char **envp)
 {
-	char *path;
-	char **comand;
+	int		i;
+	char	*paths;
+	char	**path;
+
+	i = 0;
+	paths = NULL;
+	while (!paths)
+	{
+		paths = ft_strnstr(envp[i], "PATH=", 5);
+		i++;
+	}
+	paths = paths + ft_strlen("PATH=");
+	path = ft_split(paths, ':');
+	i = 0;
+	paths = ft_get_path(path, cmd);
+	if (!paths)
+	{
+		ft_putstr_fd("Comand not found: ", 0);
+		ft_putstr_fd(cmd, 0);
+		exit(-1);
+	}
+	return (paths);
+}
+
+void	ft_exec(char *cmd, char **envp)
+{
+	char	*path;
+	char	**comand;
 
 	comand = ft_split(cmd, ' ');
 	path = find_path(comand[0], envp);
@@ -27,7 +54,7 @@ void 	ft_exec(char *cmd, char **envp)
 
 void	ft_child_process(char **argv, char **envp, int *pip)
 {
-	int fin;
+	int	fin;
 
 	fin = open(argv[1], O_RDONLY);
 	if (fin < 0)
@@ -44,10 +71,11 @@ void	ft_child_process(char **argv, char **envp, int *pip)
 
 void	ft_parent_process(char **argv, char **envp, int *pip)
 {
-	int fout;
+	int	fout;
 
 	close(pip[1]);
-	fout = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
+	fout = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, S_IRWXU | S_IRWXG
+			| S_IRWXO);
 	if (fout < 0)
 	{
 		perror("File 2: ");
@@ -62,28 +90,22 @@ void	ft_parent_process(char **argv, char **envp, int *pip)
 
 int	main(int argc, char **argv, char **envp)
 {
-	int 	pip[2];
+	int		pip[2];
 	int		status;
 	pid_t	pid;
 
 	if (argc != 5)
 		return (write(1, "Invalid number of arguments\n", 28));
-	if(pipe(pip) == -1)
+	if (pipe(pip) == -1)
 	{
 		perror("Pipe: ");
-		return(-1);
+		return (-1);
 	}
 	pid = fork();
 	if (pid < 0)
-	{
 		perror("Fork: ");
-		return(-1);
-	}
-	if (pid == 0)
-	{
-		waitpid(pid, NULL, 0);
+	else if (pid == 0)
 		ft_child_process(argv, envp, pip);
-	}
 	else
 	{
 		wait(&status);

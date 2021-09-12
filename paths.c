@@ -82,36 +82,23 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
-// Devuelve el path del comando especificado
-char	*find_path(char *cmd, char **envp)
+char	*ft_get_path(char **path, char *cmd)
 {
-	int i;
-	char *paths;
-	char **path;
+	int		i;
+	char	*paths;
 
 	i = 0;
-	paths = NULL;
-	while(!paths)
-	{
-		paths = ft_strnstr(envp[i], "PATH=", 5);
-		i++;
-	}
-	paths = paths + ft_strlen("PATH=");
-	path = ft_split(paths, ':');
-	i = 0;
-	while(path[i])
+	while (path[i])
 	{
 		ft_strlcat(path[i], "/", ft_strlen(path[i]) + 2);
-		paths=ft_strjoin(path[i], cmd);
+		paths = ft_strjoin(path[i], cmd);
 		if (access(paths, F_OK) == 0)
 		{
 			ft_free_split(path);
-			return(paths);
+			return (paths);
 		}
 		free(paths);
 		i++;
 	}
-	ft_putstr_fd("Comand not found: ", 0);
-	ft_putstr_fd(cmd, 0);
-	exit(-1);
+	return (NULL);
 }

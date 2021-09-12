@@ -50,7 +50,7 @@ static void	ft_splitwrd(char **tab, char *s2, char const *s, char c)
 	{
 		if (s2[j] != c)
 		{
-			tab[i] = malloc(sizeof (char) * (ft_wrdlen(&s2[j], c) + 1));
+			tab[i] = malloc(sizeof (char) * (ft_wrdlen(&s2[j], c) + 2));
 			wlen = 0;
 			while (s2[j] && s2[j] != c)
 			{
