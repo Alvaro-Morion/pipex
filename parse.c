@@ -58,7 +58,7 @@ size_t	ft_paramlen(char *cmd)
 	return (i);
 }
 
-void	ft_split_param(char **tab, char *cmd)
+void	ft_split_param(char ***tab,char *cmd)
 {
 	size_t	i;
 	size_t	j;
@@ -69,19 +69,21 @@ void	ft_split_param(char **tab, char *cmd)
 	wdnum = 0;
 	while (cmd[j] && cmd[j] != ' ')
 	{
-		tab[wdnum] = malloc(ft_paramlen(&cmd[j]) + 1);
-		i = 0;
 		len = ft_paramlen(&cmd[j]);
-		while (i < len && cmd[j])
+		
+		*tab[wdnum] = malloc(sizeof(char *) * (len + 1));
+		i = 0;
+		while (i < len)
 		{
-			tab[wdnum][i] = cmd[j];
+			*tab[wdnum][i] = cmd[j + i];
 			i++;
-			j++;
+			printf("%zu %zu %c\n", len, i, cmd[0]);
 		}
-		tab[wdnum][i] = 0;
+		*tab[wdnum][i] = 0;
 		wdnum++;
-		j++;
+		j = j + i +1;
 	}
+	*tab[wdnum] = 0;
 }
 
 char	**ft_parse_comand(char *cmd)
@@ -91,7 +93,21 @@ char	**ft_parse_comand(char *cmd)
 	tab = malloc(ft_nparam(cmd) + 1);
 	if (!tab)
 		return (NULL);
-	ft_split_param(tab, cmd);
-	tab[ft_nparam(cmd)] = NULL;
+	ft_split_param(&tab, cmd);
 	return (tab);
+}
+
+int main(int argc, char **argv)
+{
+	char  **cmd;
+	int i;
+
+	(void)argc;
+	i = 0;
+	cmd = ft_parse_comand(argv[1]);
+	/*while(cmd[i])
+	{
+		printf("%s\n", cmd[i]);
+		i++;
+	}*/
 }
