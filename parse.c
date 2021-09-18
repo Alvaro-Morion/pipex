@@ -100,17 +100,13 @@ char	**ft_split_cmd(char const *s, char c)
 	ft_splitk(tab, s2, s, c);
 	return (tab);
 }
-/*int main(int argc, char **argv)
+/*int main(int argc, char **argv, char **envp)
 {
 	(void)argc;
-	char **tab;
-
-	tab = ft_split_cmd(argv[1], ' ');
-	while(*tab)
-	{
-		printf("%s\n", *tab);
-		tab++;
-	}
-	printf("%s\n", *tab);
-	return(0);
+	(void)argv;
+	char *cmd[2];
+	cmd[0] = "grep";
+	cmd[1] = "\'a b\'";
+	execve("/usr/bin/grep", cmd, envp);
+	perror("error:" );
 }*/
