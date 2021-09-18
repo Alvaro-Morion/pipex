@@ -21,6 +21,7 @@
 void	ft_check_args(int argc);
 char	*ft_get_path(char **path, char *cmd);
 char	**ft_split(char const *s, char c);
+char	**ft_split_cmd(char const *s, char c);
 void	ft_free_split(char **split);
 char	*ft_strjoin(char *s1, char *s2);
 char	**ft_get_comand(char *cmd);
@@ -28,4 +29,5 @@ char	*ft_strnstr(const char *big, const char *little, size_t len);
 size_t	ft_strlcat(char *dest, char const *src, size_t size);
 size_t	ft_strlen(char *str);
 int		ft_putstr_fd(char *str, int fd);
+
 #endif

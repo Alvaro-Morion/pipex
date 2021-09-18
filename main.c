@@ -38,16 +38,16 @@ void	ft_exec(char *cmd, char **envp)
 	int		i;
 
 	i = 0;
-	comand = ft_split(cmd, ' ');
+	comand = ft_split_cmd(cmd, ' ');
 	path = find_path(envp);
 	while (path[i])
 	{
 		p = ft_strjoin(ft_strjoin(path[i], "/"), comand[0]);
 		execve(p, comand, envp);
+		free(p);
 		i++;
 	}
 	perror(comand[0]);
-	free(p);
 	ft_free_split(comand);
 	exit(EXIT_FAILURE);
 }

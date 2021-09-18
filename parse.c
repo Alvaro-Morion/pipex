@@ -12,77 +12,72 @@
 
 #include "pipex.h"
 
-static void	ft_flag(int **flag, char c)
+static int	ft_ntoken(char const *s, char c)
 {
-	if(c == '\'')
-		*flag[0] = -*flag[0];
-	if(c == '\"')
-		*flag[1] = -*flag[1];
-}
-static size_t	ft_tokens(char *cmd)
-{
-	int		*flag;
-	size_t	i;
-	size_t	n;
+	int	i;
+	int run;
+	int	n;
 
-	flag = malloc(2);
-	if (!flag)
-		return (0);
-	flag[0]=-1;
-	flag[1]=-1;
 	i = 1;
 	n = 0;
-	while(cmd[i - 1])
+	while (s[i - 1])
 	{
-		ft_flag(&flag, cmd[i - 1]);
-		if (cmd[i - 1] != ' ' && (!cmd[i] || (cmd[i] == ' ' && flag[0] + flag[1] == -2)))
+		if (s[i - 1] == '\'' || s[i - 1] == '\"')
+		{
+			run = 1;
+			while(s[i - 1 + run] && s[i - 1 + run] != s[i -1])
+				run++;
+			i = i + run;
+		}
+		if (s[i - 1] != c && (s[i] == '\0' || s[i] == c))
 			n++;
 		i++;
 	}
-	free(flag);
-	return(n);
+	return (n);
 }
 
-static size_t	ft_toklen(char *s, char c)
+static int	ft_tklen(char *s, char c)
 {
-	size_t	i;
-	int		*flag;
+	int	i;
+	int run;
 
-	flag = malloc(2);
-	flag[0] = -1;
-	flag[1] = -1;
 	i = 0;
-	while (s[i] && (s[i] != c || flag[0] + flag[1] != -2))
-		i++;
-	free(flag);
+	while (s[i] && s[i] != c)
+	{
+		if (s[i - 1] == '\'' || s[i - 1] == '\"')
+		{
+			run = 1;
+			while(s[i - 1 + run] && s[i - 1 + run] != s[i -1])
+				run++;
+			i = i + run;
+		}
+		else
+			i++;
+	}
 	return (i);
 }
 
-static void	ft_sptok(char **tab,char *s)
+static void	ft_splitk(char **tab, char *s2, char const *s, char c)
 {
-	size_t	i;
-	size_t	j;
-	int		*flag;
-	size_t	wlen;
+	int	i;
+	int	j;
+	int	wlen;
+	int len;
 
-	flag = malloc(2);
-	flag[0] = -1;
-	flag[1] = -1;
 	i = 0;
 	j = 0;
-	while (s[j] && i < ft_tokens(s))
+	while (s2[j] && i < ft_ntoken(s, c))
 	{
-		if (s[j] != ' '|| flag[0] + flag[1] != -2)
+		if (s2[j] != c)
 		{
-			ft_flag(&flag, s[j]);
-			tab[i] = malloc(sizeof (char) * (ft_toklen(&s[j], ' ') + 2));
+			len = ft_tklen(&s2[j], c);
+			tab[i] = malloc(sizeof (char) * (len + 1));
 			wlen = 0;
-			while (s[j] && (s[j] != ' ' || flag[0] + flag[1] != -2))
+			while (wlen < len)
 			{
-				tab[i][wlen] = s[j];
+				tab[i][wlen] = s2[j];
 				wlen++;
 				j++;
-				ft_flag(&flag, s[j]);
 			}
 			tab[i][wlen] = '\0';
 			i++;
@@ -91,16 +86,31 @@ static void	ft_sptok(char **tab,char *s)
 			j++;
 	}
 	tab[i] = NULL;
-	free(flag);
 }
 
-char	**parse(char *cmd)
+char	**ft_split_cmd(char const *s, char c)
 {
 	char	**tab;
+	char	*s2;
 
-	tab = malloc(ft_tokens(cmd) + 1);
+	s2 = (char *)s;
+	tab = malloc(sizeof (char *) * (ft_ntoken(s, c) + 1));
 	if (!tab)
 		return (0);
-	ft_sptok(tab, cmd);
-	return(tab);
+	ft_splitk(tab, s2, s, c);
+	return (tab);
 }
+/*int main(int argc, char **argv)
+{
+	(void)argc;
+	char **tab;
+
+	tab = ft_split_cmd(argv[1], ' ');
+	while(*tab)
+	{
+		printf("%s\n", *tab);
+		tab++;
+	}
+	printf("%s\n", *tab);
+	return(0);
+}*/
