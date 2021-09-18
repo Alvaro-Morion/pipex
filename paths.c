@@ -70,7 +70,7 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
-void	ft_putstr_fd(char *s, int fd)
+int	ft_putstr_fd(char *s, int fd)
 {
 	int	i;
 
@@ -79,5 +79,15 @@ void	ft_putstr_fd(char *s, int fd)
 	{
 		write(fd, &s[i], 1);
 		i++;
+	}
+	return (0);
+}
+
+void	ft_check_args(int argc)
+{
+	if (argc != 5)
+	{
+		ft_putstr_fd("Usage: ./pipex filein comand1 comand2 fileout\n", 1);
+		exit(EXIT_FAILURE);
 	}
 }

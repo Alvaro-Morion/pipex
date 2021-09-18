@@ -59,7 +59,7 @@ void	ft_child_process(char **argv, char **envp, int *pip)
 	fin = open(argv[1], O_RDONLY);
 	if (fin < 0)
 	{
-		perror("File 1: ");
+		perror("File in: ");
 		exit(EXIT_FAILURE);
 	}
 	close(pip[0]);
@@ -77,7 +77,7 @@ void	ft_parent_process(char **argv, char **envp, int *pip)
 			| S_IRWXO);
 	if (fout < 0)
 	{
-		perror("File 2: ");
+		perror("File out: ");
 		exit(EXIT_FAILURE);
 	}
 	close(pip[1]);
@@ -93,8 +93,7 @@ int	main(int argc, char **argv, char **envp)
 	int		status;
 	pid_t	pid;
 
-	if (argc != 5)
-		return (write(1, "Invalid number of arguments\n", 28));
+	ft_check_args(argc);
 	if (pipe(pip) == -1)
 	{
 		perror("Pipe: ");
