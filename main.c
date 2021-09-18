@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-char	*find_path(char *cmd, char **envp)
+char	**find_path(char **envp)
 {
 	int		i;
 	char	*paths;
@@ -27,22 +27,27 @@ char	*find_path(char *cmd, char **envp)
 	}
 	paths = paths + ft_strlen("PATH=");
 	path = ft_split(paths, ':');
-	paths = ft_get_path(path, cmd);
-	return (paths);
+	return (path);
 }
 
 void	ft_exec(char *cmd, char **envp)
 {
-	char	*path;
+	char	**path;
 	char	**comand;
+	char	*p;
+	int i;
 
+	i = 0;
 	comand = ft_split(cmd, ' ');
-	path = find_path(comand[0], envp);
-	if (execve(path, comand, envp))
+	path = find_path(envp);
+	while(path[i])
 	{
-		perror(path);
-		exit(EXIT_FAILURE);
+		p = ft_strjoin(ft_strjoin(path[i], "/"), comand[0]);
+		execve(p, comand, envp);
+		i++;
 	}
+	perror(comand[0]);
+	exit(EXIT_FAILURE);
 }
 
 void	ft_child_process(char **argv, char **envp, int *pip)

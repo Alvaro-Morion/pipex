@@ -27,12 +27,14 @@ static size_t	ft_size(char const *s1, char const *s2)
 	return (size);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	int		i;
 	size_t	size;
 	char	*str;
 
+	if (!s2)
+		return(s1);
 	size = ft_size(s1, s2);
 	str = malloc(sizeof(char) * (size + 1));
 	if (!str)
