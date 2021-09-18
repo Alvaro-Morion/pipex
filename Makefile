@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = join.c main.c parse.c paths.c split.c
+SRCS = join.c main.c paths.c split.c
 
 OBJS = ${SRCS:.c=.o}
 

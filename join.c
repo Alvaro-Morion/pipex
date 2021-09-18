@@ -34,7 +34,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	char	*str;
 
 	if (!s2)
-		return(s1);
+		return (s1);
 	size = ft_size(s1, s2);
 	str = malloc(sizeof(char) * (size + 1));
 	if (!str)

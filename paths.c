@@ -81,24 +81,3 @@ void	ft_putstr_fd(char *s, int fd)
 		i++;
 	}
 }
-
-char	*ft_get_path(char **path, char *cmd)
-{
-	int		i;
-	char	*paths;
-
-	i = 0;
-	while (path[i])
-	{
-		ft_strlcat(path[i], "/", ft_strlen(path[i]) + 2);
-		paths = ft_strjoin(path[i], cmd);
-		if (!access(paths, F_OK) && !access(paths, R_OK))
-		{
-			ft_free_split(path);
-			return (paths);
-		}
-		free(paths);
-		i++;
-	}
-	return (NULL);
-}

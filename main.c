@@ -35,18 +35,20 @@ void	ft_exec(char *cmd, char **envp)
 	char	**path;
 	char	**comand;
 	char	*p;
-	int i;
+	int		i;
 
 	i = 0;
 	comand = ft_split(cmd, ' ');
 	path = find_path(envp);
-	while(path[i])
+	while (path[i])
 	{
 		p = ft_strjoin(ft_strjoin(path[i], "/"), comand[0]);
 		execve(p, comand, envp);
 		i++;
 	}
 	perror(comand[0]);
+	free(p);
+	ft_free_split(comand);
 	exit(EXIT_FAILURE);
 }
 

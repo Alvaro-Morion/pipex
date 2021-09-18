@@ -27,6 +27,4 @@ char	*ft_strnstr(const char *big, const char *little, size_t len);
 size_t	ft_strlcat(char *dest, char const *src, size_t size);
 size_t	ft_strlen(char *str);
 void	ft_putstr_fd(char *str, int fd);
-char    **parse(char *cmd);
-char	*ft_strdup(char *s);
 #endif
