@@ -100,5 +100,5 @@ char	*ft_get_path(char **path, char *cmd)
 		free(paths);
 		i++;
 	}
-	return(NULL);
+	return (NULL);
 }

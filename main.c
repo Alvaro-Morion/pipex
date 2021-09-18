@@ -48,6 +48,7 @@ void	ft_exec(char *cmd, char **envp)
 void	ft_child_process(char **argv, char **envp, int *pip)
 {
 	int	fin;
+
 	fin = open(argv[1], O_RDONLY);
 	if (fin < 0)
 	{
@@ -64,6 +65,7 @@ void	ft_child_process(char **argv, char **envp, int *pip)
 void	ft_parent_process(char **argv, char **envp, int *pip)
 {
 	int	fout;
+
 	fout = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, S_IRWXU | S_IRWXG
 			| S_IRWXO);
 	if (fout < 0)
@@ -89,7 +91,7 @@ int	main(int argc, char **argv, char **envp)
 	if (pipe(pip) == -1)
 	{
 		perror("Pipe: ");
-		return(-1);
+		return (-1);
 	}
 	pid = fork();
 	if (pid < 0)
@@ -101,8 +103,8 @@ int	main(int argc, char **argv, char **envp)
 		waitpid(-1, &status, 0);
 		status = WEXITSTATUS(status);
 		if (status == EXIT_FAILURE)
-			return(-1);
+			return (-1);
 		ft_parent_process(argv, envp, pip);
 	}
-	return(0);
+	return (0);
 }
