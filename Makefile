@@ -10,14 +10,13 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = join.c parse.c paths.c main.c split.c
+SRCS = join.c main.c parse.c paths.c split.c
 
 OBJS = ${SRCS:.c=.o}
 
 NAME = pipex
 
 .c.o:
-	@echo ".o files compiled"
 	@gcc -Wall -Werror -Wextra -c $< -o ${<:.c=.o}
 
 all: ${NAME}

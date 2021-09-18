@@ -12,102 +12,104 @@
 
 #include "pipex.h"
 
-size_t	ft_nparam(char *cmd)
+static int	ft_ntok(char *s, char c)
 {
-	int		sc;
-	int		dc;
-	size_t	i;
-	size_t	n;
+	int	i;
+	int	n;
+	int sc;
+	int dc;
 
+	i = 1;
+	n = 0;
 	sc = -1;
 	dc = -1;
-	n = 0;
-	i = 1;
-	while (cmd[i])
+	while (s[i - 1])
 	{
-		if (cmd[i - 1] == '\'')
+		if (s[i - 1] == '\'')
 			sc = -sc;
-		if (cmd[i - 1] == '\"')
+		if (s[i - 1] == '\"')
 			dc = -dc;
-		if (cmd[i - 1] && cmd[i] == ' ' && sc < 0 && dc < 0)
+		if (s[i - 1] != c && (s[i] == '\0' || (s[i] == c && sc + dc == -2)))
 			n++;
 		i++;
 	}
-	if (!cmd[i] && cmd[i - 1] != ' ')
-		n++;
 	return (n);
 }
 
-size_t	ft_paramlen(char *cmd)
+int	ft_toklen(char *s, char c)
 {
-	size_t	i;
-	int		sc;
-	int		dc;
+	int	i;
+	int sc;
+	int dc;
 
-	dc = -1;
 	sc = -1;
+	dc = -1;
 	i = 0;
-	while (cmd[i] && (cmd[i] != ' ' || (cmd[i] == ' ' && (sc > 0 || dc > 0))))
+	while (s[i] && (s[i] != c || (s[i] == c && sc + dc != -2)))
 	{
-		if (cmd[i] == '\'')
+		if (s[i] == '\'')
 			sc = -sc;
-		if (cmd[i] == '\"')
+		if (s[i] == '\"')
 			dc = -dc;
 		i++;
 	}
 	return (i);
 }
 
-void	ft_split_param(char ***tab,char *cmd)
+void	ft_split_tok(char **tab, char *s, char c)
 {
-	size_t	i;
-	size_t	j;
-	size_t	wdnum;
-	size_t	len;
+	int	i;
+	int	j;
+	int	wlen;
+	int sc;
+	int dc;
 
-	j = 0;
-	wdnum = 0;
-	while (cmd[j] && cmd[j] != ' ')
-	{
-		len = ft_paramlen(&cmd[j]);
-		
-		*tab[wdnum] = malloc(sizeof(char *) * (len + 1));
-		i = 0;
-		while (i < len)
-		{
-			*tab[wdnum][i] = cmd[j + i];
-			i++;
-			printf("%zu %zu %c\n", len, i, cmd[0]);
-		}
-		*tab[wdnum][i] = 0;
-		wdnum++;
-		j = j + i +1;
-	}
-	*tab[wdnum] = 0;
-}
-
-char	**ft_parse_comand(char *cmd)
-{
-	char	**tab;
-
-	tab = malloc(ft_nparam(cmd) + 1);
-	if (!tab)
-		return (NULL);
-	ft_split_param(&tab, cmd);
-	return (tab);
-}
-
-int main(int argc, char **argv)
-{
-	char  **cmd;
-	int i;
-
-	(void)argc;
+	sc = -1;
+	dc = -1;
 	i = 0;
-	cmd = ft_parse_comand(argv[1]);
-	/*while(cmd[i])
+	j = 0;
+	while (s[j] && i < ft_ntok(s, c))
 	{
-		printf("%s\n", cmd[i]);
-		i++;
-	}*/
+		if(s[j] == '\'')
+			sc = -sc;
+		if(s[j] == '\"')
+			dc = -dc;
+		if (s[j] != c)
+		{
+			tab[i] = malloc(sizeof (char) * (ft_toklen(&s[j], c) + 2));
+			wlen = 0;
+			while (s[j] && (s[j] != c || (s[j] == c && sc + dc != -2)))
+			{
+				tab[i][wlen] = s[j];
+				wlen++;
+				j++;
+				if(s[j] == '\'')
+					sc = -sc;
+				if(s[j] == '\"')
+					dc = -dc;
+			}
+			tab[i][wlen] = '\0';
+			i++;
+		}
+		else
+			j++;
+	}
+	tab[i] = NULL;
 }
+
+char	**ft_split_comand(char *cmd)
+{
+	char **tab;
+
+	tab = malloc(ft_ntok(cmd, ' ') + 2);
+	if(!tab)
+		return(NULL);
+	ft_split_tok(tab, cmd, ' ');
+	return(tab);
+}
+
+/*int main(int argc, char **argv, char **envp)
+{
+	(void)argc;
+	ft_exec(argv[1], envp);
+}*/

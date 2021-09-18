@@ -92,7 +92,7 @@ char	*ft_get_path(char **path, char *cmd)
 	{
 		ft_strlcat(path[i], "/", ft_strlen(path[i]) + 2);
 		paths = ft_strjoin(path[i], cmd);
-		if (access(paths, F_OK) == 0)
+		if (!access(paths, F_OK) && !access(paths, R_OK))
 		{
 			ft_free_split(path);
 			return (paths);
