@@ -44,7 +44,6 @@ void	ft_exec(char *cmd, char **envp)
 	{
 		p = ft_strjoin(ft_strjoin(path[i], "/"), comand[0]);
 		execve(p, comand, envp);
-		perror(p);
 		free(p);
 		i++;
 	}

@@ -15,7 +15,7 @@
 static int	ft_ntoken(char const *s, char c)
 {
 	int	i;
-	int run;
+	int	run;
 	int	n;
 
 	i = 1;
@@ -25,7 +25,7 @@ static int	ft_ntoken(char const *s, char c)
 		if (s[i - 1] == '\'' || s[i - 1] == '\"')
 		{
 			run = 1;
-			while(s[i - 1 + run] && s[i - 1 + run] != s[i -1])
+			while (s[i - 1 + run] && s[i - 1 + run] != s[i - 1])
 				run++;
 			i = i + run;
 		}
@@ -39,30 +39,50 @@ static int	ft_ntoken(char const *s, char c)
 static int	ft_tklen(char *s, char c)
 {
 	int	i;
-	int run;
+	int	run;
+	int	size;
 
+	size = 0;
 	i = 0;
 	while (s[i] && s[i] != c)
 	{
 		if (s[i - 1] == '\'' || s[i - 1] == '\"')
 		{
+			size--;
 			run = 1;
-			while(s[i - 1 + run] && s[i - 1 + run] != s[i -1])
+			while (s[i - 1 + run] && s[i - 1 + run] != s[i - 1])
 				run++;
+			size = i + run - 2;
 			i = i + run;
 		}
 		else
+		{
 			i++;
+			size++;
+		}
 	}
-	return (i);
+	return (size);
+}
+
+int	ft_write_tab(char *tab, char *s, int len)
+{
+	int	wlen;
+
+	wlen = 0;
+	while (wlen < len)
+	{
+		tab[wlen] = s[wlen];
+		wlen++;
+	}
+	tab[wlen] = 0;
+	return (wlen);
 }
 
 static void	ft_splitk(char **tab, char *s2, char const *s, char c)
 {
 	int	i;
 	int	j;
-	int	wlen;
-	int len;
+	int	len;
 
 	i = 0;
 	j = 0;
@@ -72,15 +92,12 @@ static void	ft_splitk(char **tab, char *s2, char const *s, char c)
 		{
 			len = ft_tklen(&s2[j], c);
 			tab[i] = malloc(sizeof (char) * (len + 1));
-			wlen = 0;
-			while (wlen < len)
-			{
-				tab[i][wlen] = s2[j];
-				wlen++;
+			if (s2[j] == '\'' || s2[j] == '\"')
 				j++;
-			}
-			tab[i][wlen] = '\0';
+			j = j + ft_write_tab(tab[i], &s2[j], len);
 			i++;
+			if (s2[j] == '\'' || s2[j] == '\"')
+				j++;
 		}
 		else
 			j++;
@@ -100,13 +117,3 @@ char	**ft_split_cmd(char const *s, char c)
 	ft_splitk(tab, s2, s, c);
 	return (tab);
 }
-/*int main(int argc, char **argv, char **envp)
-{
-	(void)argc;
-	(void)argv;
-	char *cmd[2];
-	cmd[0] = "grep";
-	cmd[1] = "\'a b\'";
-	execve("/usr/bin/grep", cmd, envp);
-	perror("error:" );
-}*/

@@ -34,5 +34,4 @@ clean:
 fclean: clean
 	@echo "pipex removed"
 	@rm -rf ${NAME}
-
 re: fclean all
